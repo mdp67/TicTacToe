@@ -19,6 +19,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *labelEight;
 @property (weak, nonatomic) IBOutlet UILabel *labelNine;
 @property (weak, nonatomic) IBOutlet UILabel *whichPlayerLabel;
+@property BOOL yourTurn;
 
 @end
 
@@ -31,6 +32,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.yourTurn = YES;
 
 }
 
@@ -40,8 +42,22 @@
 }
 
 - (IBAction)onLabelTapped:(UITapGestureRecognizer *)sender {
-    
+    CGPoint point = [sender locationInView:self.view];
+    NSArray *arrayOfLabels = [NSArray arrayWithObjects:self.labelOne, self.labelTwo, self.labelThree, self.labelFour, self.labelFive, self.labelSix, self.labelSeven, self.labelEight, self.labelNine, nil];
 
+    for (UILabel *label in arrayOfLabels) {
+        if (CGRectContainsPoint(label.frame, point)) {
+            label.text = @"X";
+            if (self.yourTurn) {
+                label.text = @"X";
+                self.yourTurn = NO;
+            } else {
+                label.text = @"O";
+                self.yourTurn = YES;
+            }
+        }
+
+    }
 }
 
 
