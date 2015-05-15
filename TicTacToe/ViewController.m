@@ -124,6 +124,7 @@
         label.text = @"";
         label.backgroundColor = [UIColor lightGrayColor];
     }
+    self.whichPlayerLabel.text = @"X";
 }
 
 
