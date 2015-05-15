@@ -22,6 +22,7 @@
 @property BOOL yourTurn;
 @property NSMutableArray *xArray;
 @property NSMutableArray *yArray;
+@property NSMutableArray *toCheck;
 @end
 
 @implementation ViewController
@@ -30,11 +31,51 @@
     [super viewDidLoad];
     self.yourTurn = YES;
     self.xArray = [NSMutableArray new];
+
+    // for checking delete later
+
+//    [self.xArray addObject:@3];
+//    [self.xArray addObject:@2];
+//    [self.xArray addObject:@1];
     self.yArray = [NSMutableArray new];
-        //[self.xArray addObject:[NSNumber numberWithInt:self.labelNine.tag]];
-    NSLog(@"%@", self.xArray);
-        //int *ra [8][3]= {{1,2,3},{4,5,6},{7,8,9}, {1,4,7}, {2,5,8}, {3, 6, 9}, {1, 5, 9}, {7, 5, 3}};
+
+    self.toCheck = [NSMutableArray new];
+
+  //  [self checkIfThreeObjectsMatchBetweenTwoArrays];
 }
+
+-(void)checkIfThreeNumberMatchWinnersInArray {
+
+    NSArray *arraysOfWinningCombinations = @[@[@1, @2, @3], @[@4, @5, @6], @[@7, @8, @9], @[@1, @4, @7], @[@2, @5, @8], @[@3, @6, @9], @[@1, @5, @9] , @[@7, @5, @3]];
+
+    for (NSArray *arrayThatContainsWinners in arraysOfWinningCombinations) {
+        int matchingNumberCheckInt = 0;
+        NSArray *checkArray = [NSArray new];
+        if (self.yourTurn) {
+            checkArray = self.yArray;
+        } else {
+            checkArray = self.xArray;
+        }
+
+        for (NSNumber *numberInPlayerArray in checkArray) {
+            if ([arrayThatContainsWinners containsObject:numberInPlayerArray]) {
+                matchingNumberCheckInt++;
+                NSLog(@"%i", matchingNumberCheckInt);
+                if (matchingNumberCheckInt == 3) {
+                    if (self.yourTurn) {
+                        NSLog(@"You suck");
+                        return;
+                    } else {
+                        NSLog(@"you just won the game");
+                        return;
+                    }
+
+                }
+            }
+        }
+    }
+}
+
 
 - (void) findLabelUsingPoint:(CGPoint)point
 {
@@ -64,10 +105,7 @@
                 NSLog(@"Y array %@",self.yArray);
             }
         }
-        //NSArray *arraysOfWinningCombinations = @[@[1, 2, 3], @[4, 5, 6], @[7, 8, 9], @[1, 4, 7], @[2, 5, 8], @[3, 6, 9], @[1, 5, 9] , @[7, 5, 3]];
-        //NSArray *arraysOfWinningCombinations = [NSArray arrayWithArray:@[[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7], [2, 5, 8], [3, 6, 9], [1, 5, 9] , [7, 5, 3]]];
-        //int *ra [8][3]= {{1,2,3},{4,5,6},{7,8,9}, {1,4,7}, {2,5,8}, {3, 6, 9}, {1, 5, 9}, {7, 5, 3}};
-
+        [self checkIfThreeNumberMatchWinnersInArray];
 
     }
 }
