@@ -44,32 +44,39 @@
   //  [self checkIfThreeObjectsMatchBetweenTwoArrays];
 }
 
--(void)checkIfThreeNumberMatchWinnersInArray {
+-(void)checkIfThreeNumberMatchWinnersInArray
+{
 
     NSArray *arraysOfWinningCombinations = @[@[@1, @2, @3], @[@4, @5, @6], @[@7, @8, @9], @[@1, @4, @7], @[@2, @5, @8], @[@3, @6, @9], @[@1, @5, @9] , @[@7, @5, @3]];
 
-    for (NSArray *arrayThatContainsWinners in arraysOfWinningCombinations) {
+    for (NSArray *arrayThatContainsWinners in arraysOfWinningCombinations)
+    {
         int matchingNumberCheckInt = 0;
         NSArray *checkArray = [NSArray new];
-        if (self.yourTurn) {
+        if (self.yourTurn)
+        {
             checkArray = self.yArray;
-        } else {
+        } else
+        {
             checkArray = self.xArray;
         }
 
-        for (NSNumber *numberInPlayerArray in checkArray) {
-            if ([arrayThatContainsWinners containsObject:numberInPlayerArray]) {
+        for (NSNumber *numberInPlayerArray in checkArray)
+        {
+            if ([arrayThatContainsWinners containsObject:numberInPlayerArray])
+            {
                 matchingNumberCheckInt++;
                 NSLog(@"%i", matchingNumberCheckInt);
                 if (matchingNumberCheckInt == 3) {
-                    if (self.yourTurn) {
+                    if (self.yourTurn)
+                    {
                         NSLog(@"You suck");
                         return;
-                    } else {
+                    } else
+                    {
                         NSLog(@"you just won the game");
                         return;
                     }
-
                 }
             }
         }
@@ -89,20 +96,29 @@
         if (CGRectContainsPoint(label.frame, point)) {
             label.text = @"X";
 
-            if (self.yourTurn) {
+            if (self.yourTurn && label.enabled) {
                 label.text = @"X";
                 label.backgroundColor = [UIColor blueColor];
                 self.whichPlayerLabel.text = @"O";
                 self.yourTurn = NO;
                 [self.xArray addObject:[NSNumber numberWithInt:label.tag]];
                 NSLog(@"X array %@",self.xArray);
-            } else {
+
+                label.enabled = NO;
+
+
+            } else if (!self.yourTurn && label.enabled){
                 label.text = @"O";
                 label.backgroundColor = [UIColor redColor];
                 self.whichPlayerLabel.text = @"X";
                 self.yourTurn = YES;
                 [self.yArray addObject:[NSNumber numberWithInt:label.tag]];
                 NSLog(@"Y array %@",self.yArray);
+
+                label.enabled = NO;
+
+
+
             }
         }
         [self checkIfThreeNumberMatchWinnersInArray];
