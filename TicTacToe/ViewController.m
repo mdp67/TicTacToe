@@ -8,7 +8,8 @@
 
 #import "ViewController.h"
 
-@interface ViewController ()
+@interface ViewController () <UIGestureRecognizerDelegate>
+
 @property (weak, nonatomic) IBOutlet UILabel *labelOne;
 @property (weak, nonatomic) IBOutlet UILabel *labelTwo;
 @property (weak, nonatomic) IBOutlet UILabel *labelThree;
@@ -22,7 +23,9 @@
 @property BOOL yourTurn;
 @property NSMutableArray *xArray;
 @property NSMutableArray *yArray;
-@property NSMutableArray *toCheck;
+@property NSString *whoWon;
+@property NSArray *arrayOfLabels;
+
 @end
 
 @implementation ViewController
@@ -31,26 +34,18 @@
     [super viewDidLoad];
     self.yourTurn = YES;
     self.xArray = [NSMutableArray new];
-
-    // for checking delete later
-
-//    [self.xArray addObject:@3];
-//    [self.xArray addObject:@2];
-//    [self.xArray addObject:@1];
     self.yArray = [NSMutableArray new];
-
-    self.toCheck = [NSMutableArray new];
-
-  //  [self checkIfThreeObjectsMatchBetweenTwoArrays];
+    self.arrayOfLabels = @[self.labelOne, self.labelTwo, self.labelThree, self.labelFour, self.labelFive, self.labelSix, self.labelSeven, self.labelEight, self.labelNine];
+    self.whichPlayerLabel.text = @"X";
+    self.whichPlayerLabel.backgroundColor = [UIColor blueColor];
 }
 
--(void)checkIfThreeNumberMatchWinnersInArray
-{
+-(BOOL) checkIfThreeNumberMatchWinnersInArray {
 
     NSArray *arraysOfWinningCombinations = @[@[@1, @2, @3], @[@4, @5, @6], @[@7, @8, @9], @[@1, @4, @7], @[@2, @5, @8], @[@3, @6, @9], @[@1, @5, @9] , @[@7, @5, @3]];
-
-    for (NSArray *arrayThatContainsWinners in arraysOfWinningCombinations)
-    {
+        // loop through each of the winning combination Array
+    for (NSArray *arrayThatContainsWinners in arraysOfWinningCombinations) {
+            // count how many numbers in the user array match each of the winning arrays
         int matchingNumberCheckInt = 0;
         NSArray *checkArray = [NSArray new];
         if (self.yourTurn)
@@ -60,71 +55,78 @@
         {
             checkArray = self.xArray;
         }
-
-        for (NSNumber *numberInPlayerArray in checkArray)
-        {
-            if ([arrayThatContainsWinners containsObject:numberInPlayerArray])
-            {
+        NSLog(@" check array %@", checkArray);
+        for (NSNumber *numberInPlayerArray in checkArray) {
+            if ([arrayThatContainsWinners containsObject:numberInPlayerArray]) {
                 matchingNumberCheckInt++;
-                NSLog(@"%i", matchingNumberCheckInt);
                 if (matchingNumberCheckInt == 3) {
-                    if (self.yourTurn)
-                    {
-                        NSLog(@"You suck");
-                        return;
-                    } else
-                    {
-                        NSLog(@"you just won the game");
-                        return;
+                    if (self.yourTurn) {
+                        self.whoWon = @"The Computer";
+                        return YES;
+                    } else {
+                        self.whoWon = @"You";
+                        return YES;
                     }
                 }
             }
         }
     }
+    return NO;
+}
+- (IBAction)onXODrag:(UIPanGestureRecognizer *)sender {
+    CGPoint dragPoint = [sender locationInView:self.view];
+
+    if (CGRectContainsPoint(self.whichPlayerLabel.frame, dragPoint)) {
+        NSLog(@"Dragging into the point");
+    }
+
 }
 
-
-- (void) findLabelUsingPoint:(CGPoint)point
-{
-
-}
 - (IBAction)onLabelTapped:(UITapGestureRecognizer *)sender {
     CGPoint point = [sender locationInView:self.view];
-    NSArray *arrayOfLabels = [NSArray arrayWithObjects:self.labelOne, self.labelTwo, self.labelThree, self.labelFour, self.labelFive, self.labelSix, self.labelSeven, self.labelEight, self.labelNine, nil];
 
-    for (UILabel *label in arrayOfLabels) {
-        if (CGRectContainsPoint(label.frame, point)) {
+    for (UILabel *label in self.arrayOfLabels) {
+        if (CGRectContainsPoint(label.frame, point) && label.enabled) {
             label.text = @"X";
-
-            if (self.yourTurn && label.enabled) {
+            if (self.yourTurn) {
                 label.text = @"X";
                 label.backgroundColor = [UIColor blueColor];
                 self.whichPlayerLabel.text = @"O";
                 self.yourTurn = NO;
                 [self.xArray addObject:[NSNumber numberWithInt:label.tag]];
-                NSLog(@"X array %@",self.xArray);
-
-                label.enabled = NO;
-
-
-            } else if (!self.yourTurn && label.enabled){
+                //NSLog(@"X array %@",self.xArray);
+                NSLog(@"got here");
+            } else {
                 label.text = @"O";
                 label.backgroundColor = [UIColor redColor];
                 self.whichPlayerLabel.text = @"X";
                 self.yourTurn = YES;
                 [self.yArray addObject:[NSNumber numberWithInt:label.tag]];
-                NSLog(@"Y array %@",self.yArray);
-
-                label.enabled = NO;
-
-
-
+                //NSLog(@"Y array %@",self.yArray);
             }
+            label.enabled = NO;
         }
-        [self checkIfThreeNumberMatchWinnersInArray];
+    }
+    if ([self checkIfThreeNumberMatchWinnersInArray]) {
+        NSString *alertViewTitle = [self.whoWon stringByAppendingString:@" won the Game!"];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:alertViewTitle message:@"It was a great game" delegate:nil cancelButtonTitle:@"Play again?" otherButtonTitles:nil, nil];
+        [alertView show];
+        [self resetAllLabels];
+    }
+}
 
+- (void) play:(UILabel *)label thePoint:(CGPoint) point {
+
+
+
+}
+
+- (void) resetAllLabels {
+    for (UILabel *label in self.arrayOfLabels) {
+        label.text = @"";
+        label.backgroundColor = [UIColor lightGrayColor];
     }
 }
 
 
-@end
+    @end;
